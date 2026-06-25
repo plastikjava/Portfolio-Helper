@@ -334,14 +334,21 @@ function initMediaUpload() {
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
 
+  // Datei ausgewählt
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) handleImageFile(file);
+    fileInput.value = ''; // Reset für erneuten Upload derselben Datei
   });
 
   // Einfache Klick-Weiterleitung auf mobilen Geräten
   dropZone.addEventListener('click', () => {
     fileInput.click();
+  });
+
+  // Verhindert doppeltes Öffnen des Dialogs durch Event-Bubbling
+  fileInput.addEventListener('click', (e) => {
+    e.stopPropagation();
   });
 }
 

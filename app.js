@@ -260,6 +260,9 @@ function initMediaUpload() {
   // Klick -> Datei-Dialog
   dropZone.addEventListener('click', () => fileInput.click());
 
+  // Verhindert doppeltes Öffnen des Dialogs durch Event-Bubbling
+  fileInput.addEventListener('click', (e) => e.stopPropagation());
+
   // Datei ausgewählt
   fileInput.addEventListener('change', () => {
     if (fileInput.files.length) handleImageFile(fileInput.files[0]);
