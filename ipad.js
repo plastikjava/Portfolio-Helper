@@ -469,6 +469,88 @@ function initTextTools() {
   const fontColor = document.getElementById('font-color');
   const headingStyle = document.getElementById('heading-style');
 
+  // Diktierfunktion initialisieren (Sprach-zu-Text)
+  const dictateBtn = document.getElementById('btn-dictate');
+  if (dictateBtn) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+      try {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'de-DE';
+        recognition.continuous = true;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+          isListening = true;
+          dictateBtn.classList.add('listening');
+          showToast('Spracherkennung gestartet. Bitte sprich jetzt... 🎙️', 'success');
+        };
+
+        recognition.onresult = (event) => {
+          const resultIndex = event.resultIndex;
+          const transcript = event.results[resultIndex][0].transcript;
+          if (textInput.value) {
+            textInput.value += ' ' + transcript;
+          } else {
+            textInput.value = transcript;
+          }
+          // Event auslösen, damit Fabric.js den Text übernehmen kann
+          textInput.dispatchEvent(new Event('input'));
+        };
+
+        recognition.onerror = (event) => {
+          console.warn('Speech recognition error:', event.error);
+          if (event.error === 'not-allowed') {
+            showToast('Mikrofon-Zugriff verweigert. Bitte in den Einstellungen erlauben.', 'error');
+          } else if (event.error === 'service-not-allowed') {
+            showToast('Hinweis: Apple blockiert Web-Diktate in Homescreen-Apps. Nutze das Mikrofon auf der Tastatur! 🎙️', 'warning');
+          } else {
+            showToast('Diktierfehler: ' + event.error, 'error');
+          }
+          stopListening();
+        };
+
+        recognition.onend = () => {
+          stopListening();
+        };
+      } catch (e) {
+        console.error('SpeechRecognition init failed:', e);
+      }
+
+      function stopListening() {
+        isListening = false;
+        dictateBtn.classList.remove('listening');
+        try {
+          recognition.stop();
+        } catch (e) {}
+      }
+
+      dictateBtn.addEventListener('click', () => {
+        if (isListening) {
+          stopListening();
+        } else {
+          try {
+            recognition.start();
+          } catch (err) {
+            console.warn('Failed to start speech recognition:', err);
+            showFallbackInstruction();
+          }
+        }
+      });
+    } else {
+      dictateBtn.addEventListener('click', () => {
+        showFallbackInstruction();
+      });
+    }
+  }
+
+  function showFallbackInstruction() {
+    alert('Natives Diktieren aktivieren:\n\n1. Tippe auf das Mikrofon-Symbol 🎙️ direkt auf deiner iPad-Bildschirmtastatur (neben der Leertaste), um den Text einzusprechen.\n\n2. Falls du eine externe Tastatur verwendest, drücke die Globus-Taste 🌐 (oder Cmd) zweimal hintereinander, um das Diktieren zu starten.');
+  }
+
   // Text-Buttons
   document.getElementById('btn-add-heading').addEventListener('click', () => {
     const raw = textInput.value.trim();
