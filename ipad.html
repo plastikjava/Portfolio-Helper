@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="Kita-Portfolio-Studio – Optimierte Version für iPad und Tablets.">
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kita Portfolio">
+  <link rel="apple-touch-icon" href="favicon.png">
   <title>Kita-Portfolio-Studio (Tablet-Version)</title>
 
   <!-- Google Fonts -->
@@ -341,5 +346,14 @@
 
   <!-- Tablet-specific App Logic -->
   <script src="ipad.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registriert!', reg))
+          .catch(err => console.warn('Service Worker Fehler:', err));
+      });
+    }
+  </script>
 </body>
 </html>

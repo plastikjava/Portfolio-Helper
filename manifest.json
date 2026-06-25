@@ -1,0 +1,18 @@
+{
+  "name": "Kita-Portfolio-Studio",
+  "short_name": "Kita Portfolio",
+  "description": "Portfolio-Seiten für Kinder gestalten und als PDF exportieren.",
+  "start_url": "ipad.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f6fa",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
